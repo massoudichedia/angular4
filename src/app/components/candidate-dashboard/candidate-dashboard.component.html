@@ -1,0 +1,382 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-violet-600 to-blue-500 p-4 rounded-t-2xl flex justify-between items-center sticky top-0 z-10">
+      <h2 class="text-2xl font-bold text-white">Détails du Candidat</h2>
+      <button (click)="onClose()" class="text-white hover:text-violet-200 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+      <!-- Stepper Bar -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between relative">
+          <div class="absolute top-1/2 left-0 right-0 h-1.5 bg-violet-100 -translate-y-1/2 z-0 rounded-full"></div>
+          
+          @for (step of recruitmentSteps; track step.id; let i = $index) {
+            <div class="flex flex-col items-center relative z-10">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all"
+                   [ngClass]="{
+                     'bg-gradient-to-br from-violet-500 to-blue-500 text-white shadow-lg': isActiveOrCompleted(step.id),
+                     'bg-violet-100 text-violet-400': !isActiveOrCompleted(step.id)
+                   }">
+                @if (isCompleted(step.id)) {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                } @else {
+                  <span class="text-lg font-medium">{{ i + 1 }}</span>
+                }
+              </div>
+              
+              <span class="text-sm font-medium transition-colors"
+                    [ngClass]="{
+                      'text-violet-700 font-semibold': isActiveOrCompleted(step.id),
+                      'text-violet-400': !isActiveOrCompleted(step.id)
+                    }">
+                {{ step.label }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="flex flex-col md:flex-row gap-6 mb-8">
+        <div class="flex-shrink-0">
+          <img [src]="candidate.avatar" alt="Profile" 
+               class="w-32 h-32 rounded-full object-cover border-4 border-violet-100 shadow-md">
+        </div>
+        
+        <div class="flex-1">
+          <h1 class="text-3xl font-bold mb-2 text-violet-900">{{ candidate.name }}</h1>
+          
+          <!-- Contact Info -->
+          <div class="flex flex-wrap items-center gap-4 mb-4">
+            <div class="flex items-center text-violet-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              {{ candidate.email }}
+            </div>
+            <div class="flex items-center text-violet-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              {{ candidate.phone }}
+            </div>
+          </div>
+          
+          <!-- Status Badge -->
+          <div class="inline-block px-4 py-2 rounded-full mb-4"
+               [ngClass]="{
+                 'bg-violet-100 text-violet-800': candidate.status === 'PresSelectionne',
+                 'bg-blue-100 text-blue-800': candidate.status === 'RH Interview',
+                 'bg-indigo-100 text-indigo-800': candidate.status === 'Technique',
+                 'bg-emerald-100 text-emerald-800': candidate.status === 'Embauché(e)',
+                 'bg-gray-100 text-gray-800': candidate.status === 'Refusé'
+               }">
+            {{ getStatusLabel(candidate.status) }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase Progress Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        @for (step of recruitmentSteps; track step.id) {
+          <div class="card-container relative hover:shadow-lg transform hover:-translate-y-1">
+            <div class="absolute top-2 right-2 text-yellow-400 cursor-pointer" 
+                 (click)="navigateToEvaluation(step.id)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 .587l3.668 7.431L24 9.748l-6 5.847 1.417 8.261L12 18.896l-7.417 4.96L6 15.595 0 9.748l8.332-1.73z"/>
+              </svg>
+            </div>
+            
+            <div class="flex items-center mb-3">
+              <div class="icon-container" [style.backgroundColor]="step.color">
+                @switch(step.id) {
+                  @case ('PresSelectionne') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="8.5" cy="7" r="4"></circle>
+                      <polyline points="17 11 19 13 23 9"></polyline>
+                    </svg>
+                  }
+                  @case ('RH Interview') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                  }
+                  @case ('Technique') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="16 18 22 12 16 6"></polyline>
+                      <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                  }
+                  @case ('Embauché(e)') {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                      <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                  }
+                }
+              </div>
+              <h3 class="font-semibold text-lg text-violet-800">{{ step.label }}</h3>
+            </div>
+            
+            <div class="relative w-full mb-4" style="height: 120px;">
+              <svg class="w-full h-full" viewBox="0 0 36 36">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#e9d5ff"
+                  stroke-width="3"
+                />
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  [attr.stroke]="step.color"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  [attr.stroke-dasharray]="getProgress(step.id) + ', 100'"
+                />
+                <text x="18" y="20.5" text-anchor="middle" font-size="10" fill="#6b46c1" font-weight="bold">
+                  {{ getProgress(step.id) }}%
+                </text>
+              </svg>
+            </div>
+            
+            <button (click)="openNotesModal(step.id)" 
+                    class="flex items-center text-violet-600 hover:text-violet-800 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              Notes: {{ getPhaseNotesCount(step.id) }}
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Notes Modal -->
+      @if (showNotesModal) {
+        <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+            <div class="p-6">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-violet-800">Notes par phase</h3>
+                <button (click)="showNotesModal = false" class="text-violet-600 hover:text-violet-800">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="space-y-6">
+                @for (step of recruitmentSteps; track step.id) {
+                  <div class="bg-violet-50 p-4 rounded-xl">
+                    <div class="flex items-center mb-3">
+                      <div class="w-8 h-8 rounded-full mr-2 flex items-center justify-center text-white" 
+                           [style.backgroundColor]="step.color">
+                        {{ step.label.charAt(0) }}
+                      </div>
+                      <h4 class="font-semibold text-lg text-violet-800">{{ step.label }}</h4>
+                    </div>
+                    
+                    <div class="mb-4">
+                      <textarea 
+                        [(ngModel)]="newNoteContent"
+                        class="w-full p-3 border border-violet-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-300 mb-2"
+                        rows="3" 
+                        placeholder="Ajouter une note pour cette phase...">
+                      </textarea>
+                      <button 
+                        (click)="addNote(step.id)"
+                        class="px-4 py-2 text-white rounded-lg hover:opacity-90 transition-all"
+                        [style.backgroundColor]="step.color">
+                        Ajouter Note
+                      </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      @for (note of getNotesForPhase(step.id); track note.content + note.date.getTime()) {
+                        <div class="p-4 rounded-lg transition-all hover:shadow-md"
+                             [style.backgroundColor]="step.bgColor"
+                             [style.borderLeft]="'4px solid ' + step.color">
+                          <div class="flex justify-between items-start mb-2">
+                            <span class="font-medium text-sm uppercase tracking-wider" 
+                                  [style.color]="step.color">
+                              {{ step.noteType }}
+                            </span>
+                            <span class="text-xs text-violet-500">{{ note.date | date:'shortDate' }}</span>
+                          </div>
+                          <p class="text-violet-800 mb-3">{{ note.content }}</p>
+                          <button 
+                            (click)="removeNote(note)"
+                            class="text-xs text-violet-600 hover:text-violet-900 transition-colors">
+                            Supprimer
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Information Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Education -->
+        <div class="card-container">
+          <h3 class="text-xl font-semibold mb-3 text-violet-800 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            Éducation
+          </h3>
+          <p class="text-violet-700">{{ candidate.education }}</p>
+        </div>
+
+        <!-- Experience -->
+        <div class="card-container">
+          <h3 class="text-xl font-semibold mb-3 text-violet-800 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+              <path d="M21 13.255A23.931 23.931 0 0 1 12 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2m4 6h.01M5 20h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"></path>
+            </svg>
+            Expérience Professionnelle
+          </h3>
+          <p class="text-violet-700">{{ candidate.experience }}</p>
+        </div>
+
+        <!-- Skills -->
+        <div class="card-container">
+          <h3 class="text-xl font-semibold mb-3 text-violet-800 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Compétences
+          </h3>
+          <div class="flex flex-wrap gap-2">
+            @for (skill of candidate.skills; track skill) {
+              <span class="bg-violet-100 text-violet-800 px-3 py-1 rounded-full text-sm hover:bg-violet-200 transition-colors">
+                {{ skill }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Global Notes -->
+        <div class="card-container">
+          <h3 class="text-xl font-semibold mb-3 text-violet-800 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Notes Globales
+          </h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            @for (note of candidate.notes || []; track $index) {
+              <div class="p-4 rounded-lg transition-all hover:shadow-md"
+                   [ngClass]="{
+                     'bg-violet-50 border-l-4 border-violet-500': note.type === 'RH',
+                     'bg-blue-50 border-l-4 border-blue-500': note.type === 'Technique',
+                     'bg-cyan-50 border-l-4 border-cyan-500': note.type === 'Test Technique',
+                     'bg-emerald-50 border-l-4 border-emerald-500': note.type === 'Générale'
+                   }">
+                <div class="flex justify-between items-start mb-2">
+                  <span class="font-medium text-sm uppercase tracking-wider"
+                        [ngClass]="{
+                          'text-violet-600': note.type === 'RH',
+                          'text-blue-600': note.type === 'Technique',
+                          'text-cyan-600': note.type === 'Test Technique',
+                          'text-emerald-600': note.type === 'Générale'
+                        }">
+                    {{ note.type }}
+                  </span>
+                  <span class="text-xs text-violet-500">{{ note.date | date:'shortDate' }}</span>
+                </div>
+                <p class="text-violet-800 mb-3">{{ note.content }}</p>
+                <button (click)="removeNote(note)" 
+                        class="text-xs text-violet-600 hover:text-violet-900 transition-colors">
+                  Supprimer
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-8 flex justify-end gap-4">
+        <button (click)="downloadCV()" class="px-4 py-2 border border-violet-600 text-violet-600 rounded-lg hover:bg-violet-50 transition-colors flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Télécharger CV
+        </button>
+        
+        <button (click)="openEmailModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          Envoyer Email
+        </button>
+        
+        <button class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+          Contacter
+        </button>
+      </div>
+    </div>
+  </div>
+
+ <!-- Email Modal -->
+@if (showEmailModal) {
+  <app-send-email-to-candidate 
+    [candidateEmail]="candidate.email"
+    [candidateName]="candidate.name"
+    (close)="closeEmailModal()">
+  </app-send-email-to-candidate>
+}
+</div>

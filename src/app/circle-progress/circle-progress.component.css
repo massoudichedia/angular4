@@ -1,0 +1,20 @@
+/* Couleurs par statut */
+.pres-selectionne {
+  --progress-color: #EF5350;
+}
+
+.rh-interview {
+  --progress-color: #FFA726;
+}
+
+.technique {
+  --progress-color: #42A5F5;
+}
+
+.embauche {
+  --progress-color: #66BB6A;
+}
+
+.refuse {
+  --progress-color: #9E9E9E;
+}

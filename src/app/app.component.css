@@ -1,0 +1,91 @@
+.bg-purple-800 {
+  background-color: #7f47e0;
+}
+
+/* Transition for sidebar */
+.transition-all {
+  transition-property: all;
+}
+
+.duration-300 {
+  transition-duration: 300ms;
+}
+
+/* Main content area */
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+/* Kanban board styles */
+.min-w-\[380px\] {
+  min-width: 380px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .flex {
+    flex-direction: column;
+  }
+  
+  .w-64, .w-20 {
+    width: 100%;
+  }
+}
+/* Sidebar styles */
+.bg-purple-800 {
+  background-color: #ae9bcd;
+  backdrop-filter: blur(10px);
+  background-color: rgba(199, 181, 230, 0.8);
+}
+
+/* Glass effect */
+.glass-effect {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Responsive sidebar */
+@media (max-width: 768px) {
+  .sidebar-collapsed {
+    width: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+  
+  .sidebar-expanded {
+    width: 100%;
+  }
+}
+
+/* Hover effects */
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+/* Active item border gradient */
+.active-item-border {
+  position: relative;
+}
+
+.active-item-border::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #38bdf8, #818cf8);
+}

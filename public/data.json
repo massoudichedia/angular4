@@ -1,0 +1,149 @@
+[
+  {
+    "id": "todo",
+    "title": "Pré-sélectionné",
+    "tickets": [
+      {
+        "id": "candidate-1",
+        "name": "rahma farhat",
+        "email": "rahmafarhat9@gmail.com ",
+        "phone": "+216 23 12 34 56 ",
+        "avatar": "https://randomuser.me/api/portraits/men/32.jpg",
+        "education": "Master en Informatique, Université Paris-Saclay",
+        "experience": "3 ans en développement frontend",
+        "skills": ["Angular", "TypeScript", "UI/UX"],
+        "status": "PresSelectionne",
+         "progress": 25,
+           "notes": []
+
+
+      },
+      {
+  "id": "candidate-1",
+  "name": "chedia massoudi",
+  "email": "chedia.massoudi@gmail.com",
+  "phone": "+216 23 12 34 56",
+  "avatar": "https://st3.depositphotos.com/6697918/15699/v/450/depositphotos_156996600-stock-illustration-beautiful-face-of-arabic-muslim.jpg",
+  "education": "Master en Informatique, Université Paris-Saclay",
+  "experience": "3 ans en développement frontend",
+  "skills": ["Angular", "TypeScript", "UI/UX"],
+  "status": "PresSelectionne",
+  "progress": 25,
+  "notes": []
+}
+    ]
+  },
+  {
+    "id": "in-progress",
+    "title": "Entretien RH",
+    "tickets": [
+      {
+        "id": "candidate-2",
+        "name": "Marie Martin",
+        "email": "marie.martin@example.com",
+        "phone": "+33 6 23 45 67 89",
+        "avatar": "https://randomuser.me/api/portraits/women/44.jpg",
+        "education": "Licence en Ressources Humaines, Sorbonne Université",
+        "experience": "5 ans en recrutement IT",
+        "skills": ["Recrutement", "GPEC", "Employer Branding"],
+        "status": "RH Interview",
+         "languages": [
+        {"name": "Français", "level": "Natif"},
+        {"name": "Anglais", "level": "Courant"},
+        {"name": "Arabe", "level": "Intermédiaire"}
+      ],
+      "location": "Tunis, Tunisie",
+      "softSkills": ["Communication", "Esprit d'équipe", "Adaptabilité"],
+         "progress": 40,
+           "notes": []
+
+
+      }
+    ]
+  },
+  {
+    "id": "done",
+    "title": "Entretien Technique",
+    "tickets": [
+      {
+        "id": "candidate-3",
+        "name": "Pierre Lambert",
+        "email": "pierre.lambert@example.com",
+        "phone": "+33 6 34 56 78 90",
+        "avatar": "https://randomuser.me/api/portraits/men/67.jpg",
+        "education": "Diplôme d'Ingénieur, École Polytechnique",
+        "experience": "7 ans en architecture logicielle",
+        "skills": ["Java", "Spring", "Microservices"],
+        "status": "Technique",
+         "progress": 65,
+          "languages": [
+        {"name": "Français", "level": "Natif"},
+        {"name": "Anglais", "level": "Courant"},
+        {"name": "Arabe", "level": "Intermédiaire"}
+      ],
+      "location": "Tunis, Tunisie",
+      "softSkills": ["Communication", "Esprit d'équipe", "Adaptabilité"],
+           "notes": []
+
+
+      }
+    ]
+  },
+  {
+    "id": "done",
+    "title": "Embauché(e)",
+    "tickets": [
+      {
+        "id": "candidate-4",
+        "name": "Sophie Bernard",
+        "email": "sophie.bernard@example.com",
+        "phone": "+33 6 45 67 89 01",
+        "avatar": "https://randomuser.me/api/portraits/women/28.jpg",
+        "education": "MBA, HEC Paris",
+        "experience": "10 ans en management de projet",
+        "skills": ["Agile", "Scrum", "PMO"],
+        "status": "Embauché(e)",
+         "progress": 85,
+           "notes": []
+
+
+      }, {
+        "id": "candidate-4",
+        "name": "christian Bern",
+        "email": "christiane.bern@gmail.com",
+        "phone": "+33 6 45 67 89 01",
+        "avatar": "https://www.iedrs.com/wp-content/uploads/2016/05/Christian-profil-pt-ronde-1.png",
+        "education": "MBA, HEC Paris",
+        "experience": "10 ans en management de projet",
+        "skills": ["Agile", "Scrum", "PMO"],
+        "status": "Embauché(e)",
+          "progress": 70,
+            "notes": []
+
+
+      }
+    
+    ]
+  },
+  {
+    "id": "rejected",
+    "title": "Refusé",
+    "tickets": [
+      {
+        "id": "candidate-6",
+        "name": "Luc Dubois",
+        "email": "luc.dubois@example.com",
+        "phone": "+33 6 56 78 90 12",
+        "avatar": "https://randomuser.me/api/portraits/men/42.jpg",
+        "education": "BTS Informatique",
+        "experience": "2 ans en développement",
+        "skills": ["PHP", "MySQL"],
+        "status": "Refusé",
+        "progress": 10,
+          "notes": []
+
+      }
+      
+    ]
+  }
+]

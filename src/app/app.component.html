@@ -1,0 +1,195 @@
+<div class="flex h-screen">
+  <!-- Bouton pour ouvrir la sidebar (visible seulement quand fermée) -->
+  <button *ngIf="isSidebarCollapsed"
+          (click)="toggleSidebar()"
+          class="fixed left-4 top-4 z-50 p-2 bg-purple-600 text-white rounded-lg shadow-lg hover:bg-purple-700 transition-all md:hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside class="w-64 min-h-screen bg-purple-800 text-white transition-all duration-300 fixed md:relative z-40"
+         [class.-translate-x-full]="isSidebarCollapsed"
+         [class.shadow-xl]="!isSidebarCollapsed">
+
+    <!-- Header de la sidebar avec bouton de fermeture -->
+    <div class="flex items-center justify-between p-6 border-b border-purple-700">
+      <h2 class="text-2xl font-bold">Recrutement</h2>
+      <button (click)="toggleSidebar()" class="p-1 rounded-md hover:bg-purple-700 md:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex flex-col gap-1 p-4">
+      <a (click)="setActiveSection('dashboard')"
+         class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-700 transition-all"
+         [class.bg-purple-600]="activeSection === 'dashboard'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+        <span>Tableau de bord RH</span>
+      </a>
+
+      <a (click)="setActiveSection('candidates')"
+         class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-700 transition-all"
+         [class.bg-purple-600]="activeSection === 'candidates'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+        <span>Candidats</span>
+      </a>
+
+
+     <a (click)="setActiveSection('stats')"
+   class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-700 transition-all"
+   [class.bg-purple-600]="activeSection === 'stats'">
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+  </svg>
+  <span>Statistiques</span>
+</a>
+
+      <a (click)="setActiveSection('settings')"
+         class="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-700 transition-all"
+         [class.bg-purple-600]="activeSection === 'settings'">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>Paramètres</span>
+      </a>
+    </nav>
+
+  </aside>
+
+  <!-- Contenu principal -->
+  <div class="flex-1 overflow-auto transition-all duration-300"
+       [class.ml-0]="isSidebarCollapsed">
+       
+
+    <div class="max-w-[1400px] mx-auto my-8 px-4">
+      <!-- Barre de statistiques -->
+      <div class="bg-white p-4 rounded-lg shadow-md mb-6 grid grid-cols-5 gap-4 text-center">
+        <div>
+          <p class="text-sm text-gray-500">Pré-sélection</p>
+          <p class="text-2xl font-bold">{{ stats()?.presSelectionne || 0 }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500">Entretiens RH</p>
+          <p class="text-2xl font-bold">{{ stats()?.rhInterview || 0 }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500">Techniques</p>
+          <p class="text-2xl font-bold">{{ stats()?.technique || 0 }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500">Embauchés</p>
+          <p class="text-2xl font-bold">{{ stats()?.embauche || 0 }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500">Refusés</p>
+          <p class="text-2xl font-bold">{{ stats()?.refuse || 0 }}</p>
+        </div>
+      </div>
+
+      <!-- Tableau Kanban -->
+      <div class="my-12">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold">Pipeline de recrutement</h2>
+          <div class="flex gap-2">
+            <button
+              (click)="showAddColumnForm = true"
+              class="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+              </svg>
+              Ajouter une phase
+            </button>
+
+            <button
+              (click)="viewJobPost()"
+              class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Voir job poste
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      @if (showAddColumnForm) {
+      <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+        <div class="flex gap-2">
+          <input
+            type="text"
+            [(ngModel)]="newColumnTitle"
+            placeholder="Nom de la nouvelle phase (ex: RH2)"
+            class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            (keyup.enter)="addNewColumn()">
+          <button
+            (click)="addNewColumn()"
+            class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+            Ajouter
+          </button>
+          <button
+            (click)="showAddColumnForm = false; newColumnTitle = ''"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+            Annuler
+          </button>
+        </div>
+      </div>
+      }
+
+      <div class="flex gap-8 overflow-x-auto pb-4" cdkDropListGroup>
+        @for (column of columns(); track column.id) {
+        <app-kanban-column
+          cdkDrag
+          class="flex-1 p-6 bg-gray-50 rounded-lg min-w-[380px]"
+          cdkDropList
+          [cdkDropListData]="column.tickets"
+          [title]="column.title"
+          [tickets]="column.tickets"
+          (cdkDropListDropped)="drop($event)"
+          (deleteColumn)="deleteColumn(column.id)"
+          (titleChanged)="updateColumnTitle(column.id, $event)">
+          @for (candidate of column.tickets; track candidate.id) {
+          <app-kanban-item
+            cdkDrag
+            [item]="candidate"
+            (openDetails)="onCandidateSelected($event)"
+            class="mb-5 last:mb-0" />
+          }
+        </app-kanban-column>
+        }
+      </div>
+    </div>
+
+
+    <!-- Dashboard des détails -->
+    @if (showDashboard && selectedCandidate) {
+    <app-candidate-dashboard
+      [candidate]="selectedCandidate"
+      (close)="onCloseDashboard()" />
+    }
+
+
+
+    <!-- Modal de description de poste -->
+    @if (showJobDescriptionModal) {
+    <app-job-description-modal
+      [jobDescription]="jobDescription"
+      (onClose)="closeJobDescriptionModal()">
+    </app-job-description-modal>
+    }
+
+    <router-outlet name="modal"></router-outlet>
+  </div>
+</div>

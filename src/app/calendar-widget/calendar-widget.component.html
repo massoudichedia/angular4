@@ -1,0 +1,18 @@
+<div class="calendar-card">
+  <div class="calendar-header">
+    <div class="month">{{ monthName }}</div>
+    <div class="year">{{ year }}</div>
+  </div>
+  <div class="calendar-body">
+    <div class="day-names">
+      <span *ngFor="let d of dayNames">{{ d }}</span>
+    </div>
+    <div class="dates">
+      <span 
+        *ngFor="let day of calendarDays" 
+        [class.empty]="!day">
+        {{ day || '' }}
+      </span>
+    </div>
+  </div>
+</div>

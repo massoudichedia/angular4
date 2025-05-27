@@ -1,0 +1,25 @@
+/* kanban-board.component.css */
+.kanban-container {
+  position: relative;
+  min-height: 100px; /* Assure un espace minimum */
+  padding-top: 60px; /* Réserve l'espace pour le bouton */
+}
+
+.add-phase-btn {
+  position: fixed; /* ou 'absolute' selon vos besoins */
+  top: 20px;
+  right: 20px;
+  z-index: 1000; /* Valeur très élevée */
+  padding: 10px 15px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Pour s'assurer qu'aucun parent ne cache le bouton */
+body {
+  overflow-x: visible !important;
+}

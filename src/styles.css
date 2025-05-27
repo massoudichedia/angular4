@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+body {
+  @apply bg-gray-100;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-preview > div {
+  @apply bg-green-300 shadow-md;
+}
+
+.cdk-drop-list-receiving {
+  border: 1px solid red;
+}
+
+/* Animate items as they're being sorted. */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

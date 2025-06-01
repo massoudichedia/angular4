@@ -1,5 +1,4 @@
-<!-- dashboard-rh.component.html -->
-<div class="max-w-[1400px] mx-auto my-8 px-4"> 
+<div class="max-w-[1400px] mx-auto my-8 px-4">
   <!-- En-tête -->
   <div class="flex justify-between items-center mb-8">
     <h1 class="text-3xl font-bold text-[#5E48E8]">Dashboard RH</h1>
@@ -15,25 +14,41 @@
 
   <!-- Cartes de statistiques -->
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 mb-8">
-    <div
-      *ngFor="let stat of stats | keyvalue"
-      class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition"
-    >
+    <div *ngFor="let stat of currentStats | keyvalue" class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
       <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-        {{ stat.key | titlecase }}
+        {{ getStatLabel(stat.key) }}
       </h3>
       <p class="text-3xl font-bold text-[#5E48E8] mt-2">{{ stat.value }}</p>
     </div>
   </div>
 
-  <!-- Carte du graphique -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 mb-8">
-    <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition md:col-span-2">
-      <h2 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+  <!-- Graphique et Calendrier -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+   
+
+    <!-- Calendrier -->
+   <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition col-span-3">
+  <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+    Planning des entretiens
+  </h3>
+  <div id="my-cal-inline" class="w-full h-[600px]">
+    @if (!calendarLoaded) {
+      <div class="flex items-center justify-center h-full">
+        <div class="text-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#5E48E8] mx-auto mb-4"></div>
+          <p class="text-gray-600">Chargement du calendrier...</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+ <!-- Graphique -->
+    <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+      <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
         Répartition des candidats
-      </h2>
-      <div class="flex justify-start items-start">
-        <canvas #pieChart class="w-64 h-64"></canvas>
+      </h3>
+      <div class="chart-container">
+        <canvas #pieChart></canvas>
       </div>
     </div>
   </div>

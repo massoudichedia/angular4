@@ -5,9 +5,9 @@ import emailjs, { EmailJSResponseStatus } from '@emailjs/browser';
   providedIn: 'root'
 })
 export class EmailService {
-  private readonly SERVICE_ID = 'service_hlm17og'; // Remplacez par votre Service ID
-  private readonly TEMPLATE_ID = 'template_47v3nnq'; // Remplacez par votre Template ID
-  private readonly USER_ID = 'dqrVPCM4Ikx5hL6hl'; // Remplacez par votre User ID
+  private readonly SERVICE_ID = 'service_hlm17og'; //  Service ID
+  private readonly TEMPLATE_ID = 'template_47v3nnq'; //  Template ID
+  private readonly USER_ID = 'dqrVPCM4Ikx5hL6hl'; //  User ID
 
   constructor() {
     emailjs.init(this.USER_ID);

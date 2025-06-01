@@ -1,5 +1,88 @@
+/* Styles généraux */
+.max-w-1400 {
+  max-width: 1400px;
+}
+
+/* Cartes de statistiques */
+.stat-card {
+  transition: all 0.3s ease;
+}
+
 /* dashboard-rh.component.css */
-canvas {
-  max-width: 100%;
-  max-height: 100%;
+#my-cal-inline {
+  width: 100%;
+  height: 600px; /* Augmentez la hauteur */
+  min-height: 600px;
+  border: none;
+  background: transparent;
+}
+
+#my-cal-inline iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  transform: scale(1); /* Retirez le zoom */
+  transform-origin: top left;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Graphique */
+.chart-container {
+  position: relative;
+  height: 400px;
+  width: 100%;
+}
+
+/* Calendrier */
+.calendar-container {
+  width: 100%;
+  height: 500px;
+  min-height: 500px;
+  position: relative;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #5E48E8;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .calendar-container,
+  .chart-container {
+    height: 400px;
+  }
 }

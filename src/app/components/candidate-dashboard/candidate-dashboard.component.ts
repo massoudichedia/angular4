@@ -82,27 +82,7 @@ export class CandidateDashboardComponent {
     }
   }
 
-  addKanban() {
-  const newPhaseNumber = this.recruitmentSteps.length + 1;
-  const newKanbanStep: RecruitmentStep = {
-    id: `NewPhase${newPhaseNumber}`,
-    label: `Nouvelle Phase ${newPhaseNumber}`,
-    color: this.getRandomColor(),
-    bgColor: this.getLightColor(),
-    noteType: 'Générale',
-    order: newPhaseNumber
-  };
-
-  this.recruitmentSteps.push(newKanbanStep);
-
-  // Auto-scroll horizontal vers la droite
-  setTimeout(() => {
-    const container = document.querySelector('.kanban-columns') as HTMLElement;
-    if (container) {
-      container.scrollLeft = container.scrollWidth;
-    }
-  }, 100);
-}
+ 
 
 
   private getRandomColor(): string {

@@ -1,5 +1,3 @@
-// kanban.interface.ts
-
 export interface KanbanItem {
   id: string;
   name: string;
@@ -12,30 +10,11 @@ export interface KanbanItem {
   skills: string[];
   notes?: CandidateNote[];
   evaluation?: Evaluation;
-  progress: number; // Supprimez le ? pour rendre obligatoire
+  progress: number;
   cvUrl?: string;
   appliedDate?: Date;
+  position?: string;
 }
-export interface KanbanPhase {
-  id: string;
-  title: string;
-  color: string;       // Couleur principale
-  bgColor: string;     // Couleur de fond
-  order: number;       // Ordre d'affichage
-  isLocked?: boolean;  // Optionnel: pour bloquer la suppression
-}
-export interface KanbanBoard {
-  phases: KanbanPhase[];
-  items: KanbanItem[];
-}
-
-interface Phase {
-  id: number;
-  title: string;
-  isEditing: boolean;
-  candidates: any[];
-}
-
 
 export interface KanbanColumn {
   id: string;
@@ -82,7 +61,6 @@ export type NoteType =
   | 'Feedback' 
   | 'Autre';
 
-// Interface pour les statistiques
 export interface RecruitmentStats {
   presSelectionne: number;
   rhInterview: number;
@@ -99,4 +77,3 @@ export interface JobDescription {
   requiredExperience?: string;
   educationLevel?: string;
 }
-

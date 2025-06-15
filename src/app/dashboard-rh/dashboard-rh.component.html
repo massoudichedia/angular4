@@ -22,33 +22,32 @@
     </div>
   </div>
 
-  <!-- Graphique et Calendrier -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-   
-
-    <!-- Calendrier -->
-   <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition col-span-3">
-  <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
-    Planning des entretiens
-  </h3>
-  <div id="my-cal-inline" class="w-full h-[600px]">
-    @if (!calendarLoaded) {
-      <div class="flex items-center justify-center h-full">
-        <div class="text-center">
-          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#5E48E8] mx-auto mb-4"></div>
-          <p class="text-gray-600">Chargement du calendrier...</p>
-        </div>
-      </div>
-    }
-  </div>
-</div>
- <!-- Graphique -->
+  <!-- Graphique et Calendrier - Disposition côte à côte -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Graphique - Prend 1 colonne sur 3 -->
     <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
       <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
         Répartition des candidats
       </h3>
-      <div class="chart-container">
+      <div class="chart-container h-[300px]">
         <canvas #pieChart></canvas>
+      </div>
+    </div>
+
+    <!-- Calendrier - Prend 2 colonnes sur 3 -->
+    <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition lg:col-span-2">
+      <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">
+        Planning des entretiens
+      </h3>
+      <div id="my-cal-inline" class="w-full h-[600px]">
+        @if (!calendarLoaded) {
+          <div class="flex items-center justify-center h-full">
+            <div class="text-center">
+              <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#5E48E8] mx-auto mb-4"></div>
+              <p class="text-gray-600">Chargement du calendrier...</p>
+            </div>
+          </div>
+        }
       </div>
     </div>
   </div>

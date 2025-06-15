@@ -1,1 +1,178 @@
-<p>candidate-evaluation works!</p>
+<div class="overlay" (click)="closeOnOverlay($event)">
+  <div class="modal" tabindex="0">
+    <header>
+      <div class="header-content">
+        <div class="header-top">
+<button class="back-btn" (click)="goBack()" aria-label="Retour">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+          <h2>Évaluation du candidat</h2>
+          <button class="close-btn" (click)="close()" aria-label="Fermer modal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="candidate-info">
+          <img [src]="candidate?.avatar" alt="Photo" class="candidate-avatar">
+          <div>
+            <h3>{{ candidate?.name }}</h3>
+            <p>{{ step?.label }}</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="modal-content">
+      <form *ngIf="candidate && step" (ngSubmit)="submit()" #evaluationForm="ngForm">
+        <div class="evaluation-grid">
+          <div class="grid-header">
+            <span>Compétence</span>
+            <span>Niveau requis</span>
+            <span>Niveau acquise</span>
+            <span>Note</span>
+          </div>
+
+          <div class="skill-category">Compétences Techniques</div>
+          
+          <div *ngFor="let skill of technicalSkills; let i = index" class="skill-row">
+            <div class="skill-name">{{ skill.name }}</div>
+            
+            <div class="required-level">
+              <div class="stars">
+                <span *ngFor="let star of [1,2,3,4,5]" 
+                      [class.active]="star <= skill.required">
+                  ★
+                </span>
+              </div>
+            </div>
+            
+            <div class="evaluation-stars">
+              <div class="stars">
+                <span *ngFor="let star of [1,2,3,4,5]" 
+                      [class.active]="star <= skill.acquired"
+                      (click)="setRating('technicalSkills', i, star)">
+                  ★
+                </span>
+              </div>
+            </div>
+            
+            <div class="skill-rating">
+              {{ skill.acquired }}/5
+            </div>
+          </div>
+
+          <div class="skill-total">
+            <div>Total Compétences Techniques</div>
+            <div>{{ technicalTotal }}/{{ technicalMax }}</div>
+          </div>
+
+          <div class="skill-category">Langues</div>
+          
+          <div *ngFor="let skill of languageSkills; let i = index" class="skill-row">
+            <div class="skill-name">{{ skill.name }}</div>
+            
+            <div class="required-level">
+              <div class="stars">
+                <span *ngFor="let star of [1,2,3,4,5]" 
+                      [class.active]="star <= skill.required">
+                  ★
+                </span>
+              </div>
+            </div>
+            
+            <div class="evaluation-stars">
+              <div class="stars">
+                <span *ngFor="let star of [1,2,3,4,5]" 
+                      [class.active]="star <= skill.acquired"
+                      (click)="setRating('languageSkills', i, star)">
+                  ★
+                </span>
+              </div>
+            </div>
+            
+            <div class="skill-rating">
+              {{ skill.acquired }}/5
+            </div>
+          </div>
+
+          <div class="skill-total">
+            <div>Total Langues</div>
+            <div>{{ languageTotal }}/{{ languageMax }}</div>
+          </div>
+
+          <div class="skill-category">Compétences Comportementales</div>
+          
+          <div *ngFor="let skill of softSkills; let i = index" class="skill-row">
+            <div class="skill-name">{{ skill.name }}</div>
+            
+            <div class="required-level">
+              <div class="stars">
+                <span *ngFor="let star of [1,2,3,4,5]" 
+                      [class.active]="star <= skill.required">
+                  ★
+                </span>
+              </div>
+            </div>
+            
+            <div class="evaluation-stars">
+              <div class="stars">
+                <span *ngFor="let star of [1,2,3,4,5]" 
+                      [class.active]="star <= skill.acquired"
+                      (click)="setRating('softSkills', i, star)">
+                  ★
+                </span>
+              </div>
+            </div>
+            
+            <div class="skill-rating">
+              {{ skill.acquired }}/5
+            </div>
+          </div>
+
+          <div class="skill-total">
+            <div>Total Compétences Comportementales</div>
+            <div>{{ softSkillsTotal }}/{{ softSkillsMax }}</div>
+          </div>
+        </div>
+
+        <div class="comments-section">
+          <h3>Commentaires</h3>
+          <textarea [(ngModel)]="comments" name="comments" 
+                    placeholder="Ajoutez vos remarques sur le candidat..." required></textarea>
+        </div>
+
+        <div class="summary-section">
+          <div class="summary-card">
+            <h4>Score total</h4>
+            <div class="score">{{ totalScore }}/{{ maxPossibleScore }}</div>
+            <div class="rating" [ngClass]="ratingClass">{{ ratingText }}</div>
+          </div>
+          <div class="summary-card">
+            <h4>Mention</h4>
+            <div class="mention">{{ mention }}</div>
+          </div>
+        </div>
+
+        <div *ngIf="evaluationForm.valid && isEvaluationComplete" class="completion-message">
+          Évaluation complète! Vous pouvez maintenant enregistrer.
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn-cancel" (click)="close()">Annuler</button>
+          <button type="submit" class="btn-submit" [disabled]="!evaluationForm.valid || !isEvaluationComplete">
+            Enregistrer l'évaluation
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="!candidate || !step" class="loading-state">
+        Chargement des informations du candidat...
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<div class="scheduler-container">
+  <h3>Planifier un entretien</h3>
+  <p>Le candidat recevra un email avec le lien pour choisir un créneau</p>
+  
+  <button (click)="onScheduleInterview()" class="btn btn-primary">
+    <i class="fas fa-calendar-plus"></i> Envoyer l'invitation
+  </button>
+  
+  <div class="cal-link" *ngIf="calLink">
+    <p>Ou partagez ce lien directement :</p>
+    <input type="text" [value]="calLink" readonly class="form-control">
+    <button (click)="copyToClipboard()" class="btn btn-secondary">
+      <i class="fas fa-copy"></i> Copier
+    </button>
+  </div>
+</div>

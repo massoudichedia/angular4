@@ -1,20 +1,18 @@
 <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
     <div class="p-6">
+      <!-- Header -->
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-xl font-bold text-violet-800">Envoyer un email à {{candidateName}}</h3>
         <button (click)="onClose()" class="text-violet-600 hover:text-violet-800">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" 
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <!-- Message de statut -->
-      <div *ngIf="statusMessage" 
-           class="mb-4 p-3 rounded-lg"
+      <!-- Status message -->
+      <div *ngIf="statusMessage" class="mb-4 p-3 rounded-lg"
            [class.bg-green-100]="isSuccess"
            [class.text-green-700]="isSuccess"
            [class.bg-red-100]="!isSuccess"
@@ -22,7 +20,7 @@
         {{statusMessage}}
       </div>
 
-      <!-- Sélection du template -->
+      <!-- Template selection -->
       <div class="mb-6">
         <label class="block text-violet-700 mb-2">Modèle d'email</label>
         <select [(ngModel)]="selectedTemplate" 
@@ -34,59 +32,93 @@
         </select>
       </div>
 
-      <form [formGroup]="emailForm" (submit)="sendEmail()">
-        <!-- Destinataire -->
+      <!-- Interview type selection (only for invitation templates) -->
+      <div *ngIf="selectedTemplate.includes('invitation')" class="mb-6">
+        <label class="block text-violet-700 mb-2">Type d'entretien</label>
+        <select [(ngModel)]="interviewType" 
+                (change)="onInterviewTypeChange()"
+                class="w-full p-2 border border-violet-200 rounded-lg">
+          <option value="technical">Technique</option>
+          <option value="hr">RH</option>
+        </select>
+      </div>
+
+      <!-- Email form -->
+      <form [formGroup]="emailForm" (ngSubmit)="sendEmail()">
+        <!-- Email field -->
         <div class="mb-4">
           <label class="block text-violet-700 mb-2">Destinataire</label>
-          <input type="email" formControlName="to_email" 
-                 class="w-full p-2 border border-violet-200 rounded-lg bg-gray-100"
-                 readonly>
+          <input formControlName="to_email" type="email" 
+                 class="w-full p-2 border border-violet-200 rounded-lg" readonly>
         </div>
 
-        <!-- Sujet et Message (affichage conditionnel) -->
-        <div *ngIf="showCustomForm">
-          <!-- Sujet -->
-          <div class="mb-4">
-            <label class="block text-violet-700 mb-2">Sujet *</label>
-            <input type="text" formControlName="subject"
-                   class="w-full p-2 border border-violet-200 rounded-lg"
-                   [class.border-red-300]="emailForm.get('subject')?.invalid && emailForm.get('subject')?.touched">
-            <div *ngIf="emailForm.get('subject')?.invalid && emailForm.get('subject')?.touched" 
-                 class="text-red-500 text-sm mt-1">
-              Le sujet est requis (min. 5 caractères)
-            </div>
-          </div>
-
-          <!-- Message -->
-          <div class="mb-4">
-            <label class="block text-violet-700 mb-2">Message *</label>
-            <textarea formControlName="body" rows="8"
-                      class="w-full p-2 border border-violet-200 rounded-lg"
-                      [class.border-red-300]="emailForm.get('body')?.invalid && emailForm.get('body')?.touched"></textarea>
-            <div *ngIf="emailForm.get('body')?.invalid && emailForm.get('body')?.touched" 
-                 class="text-red-500 text-sm mt-1">
-              Le message est requis (min. 20 caractères)
-            </div>
+        <!-- Subject field -->
+        <div class="mb-4">
+          <label class="block text-violet-700 mb-2">Sujet</label>
+          <input formControlName="subject" type="text" 
+                 class="w-full p-2 border border-violet-200 rounded-lg"
+                 [class.border-red-300]="emailForm.get('subject')?.invalid && emailForm.get('subject')?.touched">
+          <div *ngIf="emailForm.get('subject')?.invalid && emailForm.get('subject')?.touched" 
+               class="text-red-500 text-sm mt-1">
+            Le sujet est requis et doit contenir au moins 5 caractères
           </div>
         </div>
 
-        <!-- Boutons -->
+        <!-- Body field -->
+        <div class="mb-6">
+          <label class="block text-violet-700 mb-2">Message</label>
+          <textarea formControlName="body" rows="8"
+                    class="w-full p-2 border border-violet-200 rounded-lg"
+                    [class.border-red-300]="emailForm.get('body')?.invalid && emailForm.get('body')?.touched"></textarea>
+          <div *ngIf="emailForm.get('body')?.invalid && emailForm.get('body')?.touched" 
+               class="text-red-500 text-sm mt-1">
+            Le message est requis et doit contenir au moins 20 caractères
+          </div>
+        </div>
+
+        <!-- Buttons -->
         <div class="flex justify-end gap-4">
-          <button type="button" (click)="onClose()"
-                  class="px-4 py-2 border border-violet-600 text-violet-600 rounded-lg">
+          <button type="button" (click)="onClose()" class="px-4 py-2 border border-violet-600 text-violet-600 rounded-lg hover:bg-violet-50">
             Annuler
           </button>
           <button type="submit" [disabled]="emailForm.invalid || isSending"
-                  class="px-4 py-2 bg-violet-600 text-white rounded-lg disabled:opacity-50 flex items-center">
+                  class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50 flex items-center">
             <span *ngIf="!isSending">Envoyer</span>
             <span *ngIf="isSending">Envoi en cours...</span>
-            <svg *ngIf="isSending" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2 animate-spin">
-              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+            <svg *ngIf="isSending" class="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           </button>
         </div>
       </form>
+
+      <!-- Member selection -->
+      <div *ngIf="showMemberSelection" class="mt-6 p-4 border border-blue-200 rounded-lg bg-blue-50">
+        <h4 class="text-lg font-semibold text-blue-800 mb-3">Inviter des membres</h4>
+        
+        <div class="space-y-3 mb-4">
+          <div *ngFor="let member of teamMembers" class="flex items-center p-2 hover:bg-blue-100 rounded">
+            <input type="checkbox" [(ngModel)]="member.selected" 
+                   class="mr-3 h-5 w-5 text-blue-600 rounded">
+            <div>
+              <p class="font-medium">{{member.name}}</p>
+              <p class="text-sm text-gray-600">{{member.email}}</p>
+            </div>
+          </div>
+        </div>
+
+        <button (click)="inviteMembersToBooking()" 
+                [disabled]="selectedMembers.length === 0 || isSending"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center">
+          <span *ngIf="!isSending">Inviter les membres sélectionnés</span>
+          <span *ngIf="isSending">Envoi en cours...</span>
+          <svg *ngIf="isSending" class="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 </div>

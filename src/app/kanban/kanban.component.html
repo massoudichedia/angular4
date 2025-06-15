@@ -46,11 +46,8 @@
           Voir job poste
         </button>
       </div>
-
     </div>
-
   </div>
-
 
   @if (showAddColumnForm) {
   <div class="mb-6 p-4 bg-gray-50 rounded-lg">
@@ -99,15 +96,13 @@
   </div>
 </div>
 
-
 <!-- Dashboard des détails -->
 @if (showDashboard && selectedCandidate) {
 <app-candidate-dashboard
   [candidate]="selectedCandidate"
+  [recruitmentSteps]="recruitmentSteps"
   (close)="onCloseDashboard()" />
 }
-
-
 
 <!-- Modal de description de poste -->
 @if (showJobDescriptionModal) {

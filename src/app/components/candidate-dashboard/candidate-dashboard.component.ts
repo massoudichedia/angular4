@@ -3,17 +3,19 @@ import { KanbanItem, RecruitmentStep, SkillEvaluation, CandidateNote } from '../
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SendEmailToCandidateComponent } from '../../send-email-to-candidate/send-email-to-candidate.component'; // Ajoutez cette ligne
+import { SendEmailToCandidateComponent } from '../../send-email-to-candidate/send-email-to-candidate.component';
+import { EmailService } from '../../email.service';
 
 @Component({
   selector: 'app-candidate-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule,SendEmailToCandidateComponent],
+  imports: [CommonModule, FormsModule, SendEmailToCandidateComponent],
   templateUrl: './candidate-dashboard.component.html',
   styleUrls: ['./candidate-dashboard.component.css']
 })
 export class CandidateDashboardComponent {
   @Input() candidate!: KanbanItem;
+  @Input() recruitmentSteps: RecruitmentStep[] = [];
   @Output() close = new EventEmitter<void>();
 
   newNoteContent = '';
@@ -23,46 +25,54 @@ export class CandidateDashboardComponent {
   evaluationPhase = '';
   currentEvaluations: SkillEvaluation[] = [];
   phaseSkills: Record<string, SkillEvaluation[]> = {};
+  showEmailModal = false;
+  isSendingCalendarLink = false;
 
-  recruitmentSteps: RecruitmentStep[] = [
-    { 
-      id: 'PresSelectionne', 
-      label: 'Pré-sélection', 
-      color: '#8b5cf6',
-      bgColor: '#f5f3ff',
-      noteType: 'RH',
-      order: 1
-    },
-    { 
-      id: 'RH Interview', 
-      label: 'Entretien RH', 
-      color: '#3b82f6',
-      bgColor: '#eff6ff',
-      noteType: 'RH',
-      order: 2
-    },
-    { 
-      id: 'Technique', 
-      label: 'Entretien Technique', 
-      color: '#06b6d4',
-      bgColor: '#ecfeff',
-      noteType: 'Technique',
-      order: 3
-    },
-    { 
-      id: 'Embauché(e)', 
-      label: 'Embauché', 
-      color: '#10b981',
-      bgColor: '#ecfdf5',
-      noteType: 'Générale',
-      order: 4
-    }
-  ];
-
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private emailService: EmailService
+  ) {}
 
   ngOnInit() {
     this.initializeCandidateData();
+    
+    // Si aucun recruitmentSteps n'est passé en input, utilisez les valeurs par défaut
+    if (!this.recruitmentSteps || this.recruitmentSteps.length === 0) {
+      this.recruitmentSteps = [
+        { 
+          id: 'PresSelectionne', 
+          label: 'Pré-sélection', 
+          color: '#8b5cf6',
+          bgColor: '#f5f3ff',
+          noteType: 'RH',
+          order: 1
+        },
+        { 
+          id: 'RH Interview', 
+          label: 'Entretien RH', 
+          color: '#3b82f6',
+          bgColor: '#eff6ff',
+          noteType: 'RH',
+          order: 2
+        },
+        { 
+          id: 'Technique', 
+          label: 'Entretien Technique', 
+          color: '#06b6d4',
+          bgColor: '#ecfeff',
+          noteType: 'Technique',
+          order: 3
+        },
+        { 
+          id: 'Embauché(e)', 
+          label: 'Embauché', 
+          color: '#10b981',
+          bgColor: '#ecfdf5',
+          noteType: 'Générale',
+          order: 4
+        }
+      ];
+    }
   }
 
   private initializeCandidateData() {
@@ -80,35 +90,6 @@ export class CandidateDashboardComponent {
     if (!this.candidate.skills) {
       this.candidate.skills = [];
     }
-  }
-
- 
-
-
-  private getRandomColor(): string {
-    const colors = [
-      '#f59e0b', // amber-500
-      '#10b981', // emerald-500
-      '#3b82f6', // blue-500
-      '#6366f1', // indigo-500
-      '#8b5cf6', // violet-500
-      '#ec4899', // pink-500
-      '#ef4444'  // red-500
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
-
-  private getLightColor(): string {
-    const colors = [
-      '#fef3c7', // amber-100
-      '#d1fae5', // emerald-100
-      '#dbeafe', // blue-100
-      '#e0e7ff', // indigo-100
-      '#ede9fe', // violet-100
-      '#fce7f3', // pink-100
-      '#fee2e2'  // red-100
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
   }
 
   navigateToEvaluation(stepId: string): void {
@@ -170,37 +151,36 @@ export class CandidateDashboardComponent {
   }
 
   getStatusLabel(status: string): string {
-    const statusMap: Record<string, string> = {
-      'PresSelectionne': 'Pré-sélectionné',
-      'RH Interview': 'Entretien RH',
-      'Technique': 'Entretien Technique',
-      'Embauché(e)': 'Embauché(e)',
-      'Refusé': 'Refusé'
-    };
-    return statusMap[status] || status;
+    const step = this.recruitmentSteps.find(s => s.id === status);
+    return step ? step.label : status;
   }
 
   isActiveOrCompleted(stepId: string): boolean {
-    const stepOrder = this.recruitmentSteps.map(step => step.id);
-    const currentIndex = stepOrder.indexOf(this.candidate.status);
-    const stepIndex = stepOrder.indexOf(stepId);
-    return stepIndex <= currentIndex;
+    const currentStep = this.recruitmentSteps.find(step => step.id === this.candidate.status);
+    const targetStep = this.recruitmentSteps.find(step => step.id === stepId);
+    
+    if (!currentStep || !targetStep) return false;
+    
+    return targetStep.order <= currentStep.order;
   }
 
   isCompleted(stepId: string): boolean {
-    const stepOrder = this.recruitmentSteps.map(step => step.id);
-    const currentIndex = stepOrder.indexOf(this.candidate.status);
-    const stepIndex = stepOrder.indexOf(stepId);
-    return stepIndex < currentIndex;
+    const currentStep = this.recruitmentSteps.find(step => step.id === this.candidate.status);
+    const targetStep = this.recruitmentSteps.find(step => step.id === stepId);
+    
+    if (!currentStep || !targetStep) return false;
+    
+    return targetStep.order < currentStep.order;
   }
 
   getProgress(stepId: string): number {
-    const stepOrder = this.recruitmentSteps.map(step => step.id);
-    const currentIndex = stepOrder.indexOf(this.candidate.status);
-    const stepIndex = stepOrder.indexOf(stepId);
+    const currentStep = this.recruitmentSteps.find(step => step.id === this.candidate.status);
+    const targetStep = this.recruitmentSteps.find(step => step.id === stepId);
     
-    if (stepIndex < currentIndex) return 100;
-    if (stepIndex === currentIndex) return 50;
+    if (!currentStep || !targetStep) return 0;
+    
+    if (targetStep.order < currentStep.order) return 100;
+    if (targetStep.order === currentStep.order) return 50;
     return 0;
   }
 
@@ -216,21 +196,44 @@ export class CandidateDashboardComponent {
     this.close.emit();
   }
 
+  openEmailModal() {
+    this.showEmailModal = true;
+  }
 
-showEmailModal = false;
+  closeEmailModal() {
+    this.showEmailModal = false;
+  }
 
-openEmailModal() {
-  this.showEmailModal = true;
-}
+  sendEmail(emailData: any) {
+    console.log('Email envoyé:', emailData);
+    this.showEmailModal = false;
+  }
 
-closeEmailModal() {
-  this.showEmailModal = false;
-}
+  async sendCalendarLink() {
+    if (!this.candidate.email) {
+      console.error('Aucun email disponible pour ce candidat');
+      return;
+    }
 
-sendEmail(emailData: any) {
-  // Le traitement est maintenant dans le composant enfant
-  console.log('Email envoyé:', emailData);
-  this.showEmailModal = false;
-}
-  
+    this.isSendingCalendarLink = true;
+    try {
+      const subject = "Planification d'entretien";
+      const body = `Bonjour ${this.candidate.name},\n\nJe vous propose de planifier notre entretien en cliquant sur le lien ci-dessous :`;
+      
+      const response = await this.emailService.sendEmail(
+        this.candidate.email,
+        this.candidate.name,
+        subject,
+        body
+      );
+      
+      console.log('Réponse EmailJS:', response);
+      alert("L'invitation calendaire a été envoyée avec succès !");
+    } catch (error) {
+      console.error("Détails de l'erreur:", error);
+      alert(`Erreur détaillée: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      this.isSendingCalendarLink = false;
+    }
+  }
 }

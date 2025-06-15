@@ -1,7 +1,7 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart } from 'chart.js/auto';
-import { CalComService } from '../cal-com.service';
+import { CalComService } from '../services/cal-com.service';
 
 @Component({
   selector: 'app-dashboard-rh',

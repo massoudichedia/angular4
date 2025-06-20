@@ -1,4 +1,4 @@
-<div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+*<div class="fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
     <!-- Header -->
     <div class="bg-gradient-to-r from-violet-600 to-blue-500 p-4 rounded-t-2xl flex justify-between items-center sticky top-0 z-10">
@@ -58,33 +58,25 @@
         <div class="flex-1">
           <h1 class="text-3xl font-bold mb-2 text-violet-900">{{ candidate.name }}</h1>
           
-       <!-- Contact Info -->
-<div class="flex flex-wrap items-center gap-4 mb-4">
-  <div class="flex items-center text-violet-700">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
-         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-      <polyline points="22,6 12,13 2,6"></polyline>
-    </svg>
-    {{ candidate.email }}
-  </div>
-  
-  <div class="flex items-center text-violet-700">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
-         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-    </svg>
-    {{ candidate.phone }}
-  </div>
-
-
-
-
-
-  
-</div>
-
-
+          <!-- Contact Info -->
+          <div class="flex flex-wrap items-center gap-4 mb-4">
+            <div class="flex items-center text-violet-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              {{ candidate.email }}
+            </div>
+            
+            <div class="flex items-center text-violet-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              {{ candidate.phone }}
+            </div>
+          </div>
           
           <!-- Status Badge -->
           <div class="inline-block px-4 py-2 rounded-full mb-4"
@@ -186,7 +178,7 @@
 
       <!-- Notes Modal -->
       @if (showNotesModal) {
-        <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
           <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
             <div class="p-6">
               <div class="flex justify-between items-center mb-4">
@@ -368,18 +360,16 @@
           </svg>
           Envoyer Email
         </button>
-        
-       
       </div>
     </div>
   </div>
 
- <!-- Email Modal -->
-@if (showEmailModal) {
-  <app-send-email-to-candidate 
-    [candidateEmail]="candidate.email"
-    [candidateName]="candidate.name"
-    (close)="closeEmailModal()">
-  </app-send-email-to-candidate>
-}
+  <!-- Email Modal -->
+  @if (showEmailModal) {
+    <app-send-email-to-candidate 
+      [candidateEmail]="candidate.email"
+      [candidateName]="candidate.name"
+      (close)="closeEmailModal()">
+    </app-send-email-to-candidate>
+  }
 </div>

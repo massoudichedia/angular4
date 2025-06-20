@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import emailjs from '@emailjs/browser';
 import { CalComService } from '../services/cal-com.service';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 interface EmailTemplate {
   id: string;
@@ -12,17 +13,21 @@ interface EmailTemplate {
   body: string;
 }
 
-interface TeamMember {
-  id: number;
-  name: string;
-  email: string;
-  selected: boolean;
-}
-
 @Component({
   selector: 'app-send-email-to-candidate',
   templateUrl: './send-email-to-candidate.component.html',
   styleUrls: ['./send-email-to-candidate.component.css'],
+   animations: [
+    trigger('modalAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, backdropFilter: 'blur(0)' }),
+        animate('200ms ease-out', style({ opacity: 1, backdropFilter: 'blur(4px)' }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease-in', style({ opacity: 0, backdropFilter: 'blur(0)' }))
+      ])
+    ])
+  ],
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
@@ -38,14 +43,6 @@ export class SendEmailToCandidateComponent implements OnInit {
   isSuccess = false;
   selectedTemplate: string = 'custom';
   interviewType: string = 'technical';
-
-  teamMembers: TeamMember[] = [
-    { id: 1, name: 'Membre Technique 1', email: 'chaimamassoudi72@gmail.com', selected: false },
-    { id: 2, name: 'Membre Technique 2', email: 'sadraouizeineb@gmail.com', selected: false },
-    { id: 3, name: 'Membre RH', email: 'chedia.massoudi@gmail.com', selected: false }
-  ];
-  
-  showMemberSelection = false;
 
   emailTemplates: EmailTemplate[] = [
     { 
@@ -94,11 +91,7 @@ export class SendEmailToCandidateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    emailjs.init('dqrVPCM4Ikx5hL6hl');
-  }
-
-  get selectedMembers(): TeamMember[] {
-    return this.teamMembers.filter(m => m.selected);
+    emailjs.init('nv-UPTpGAdWinoSEM');
   }
 
   getCalendarLink(): string {
@@ -171,62 +164,18 @@ export class SendEmailToCandidateComponent implements OnInit {
 
     try {
       await emailjs.send(
-        'service_hlm17og',
-        'template_o73p1w9',
+        'service_1h19ltv',
+        'template_w1wku7e',
         templateParams
       );
 
-      if (this.selectedTemplate.includes('invitation')) {
-        this.showMemberSelection = true;
-        this.statusMessage = 'Email envoyé! Sélectionnez maintenant les membres à inviter.';
-      } else {
-        this.statusMessage = 'Email envoyé avec succès!';
-        setTimeout(() => this.onClose(), 2000);
-      }
-
+      this.statusMessage = 'Email envoyé avec succès!';
       this.isSuccess = true;
+      setTimeout(() => this.onClose(), 2000);
     } catch (error: any) {
       console.error('Error:', error);
       this.isSuccess = false;
       this.statusMessage = this.getErrorMessage(error);
-    } finally {
-      this.isSending = false;
-    }
-  }
-
-  async inviteMembersToBooking(): Promise<void> {
-    this.isSending = true;
-    this.statusMessage = 'Envoi des invitations en cours...';
-    this.isSuccess = false;
-
-    try {
-      const calendarLink = this.getCalendarLink();
-      const selectedMembers = this.teamMembers.filter(m => m.selected);
-
-      for (const member of selectedMembers) {
-        await emailjs.send(
-          'service_hlm17og',
-          'template_o73p1w9',
-          {
-            to_email: member.email,
-            email: member.email,
-            to_name: member.name,
-            from_name: 'Recruteur',
-            reply_to: 'chedia.massoudi@gmail.com',
-            subject: `Invitation à un entretien avec ${this.candidateName}`,
-            message: `Bonjour ${member.name},\n\nVous êtes invité à participer à un entretien avec ${this.candidateName} pour le poste de ${this.candidatePosition}.\n\nCordialement,\nL'équipe de recrutement`,
-            position: this.candidatePosition
-          }
-        );
-      }
-
-      this.statusMessage = `${selectedMembers.length} membres invités avec succès!`;
-      this.isSuccess = true;
-      setTimeout(() => this.onClose(), 2000);
-    } catch (error: any) {
-      console.error('Erreur:', error);
-      this.statusMessage = error.message || error.error?.message || "Erreur lors de l'invitation des membres";
-      this.isSuccess = false;
     } finally {
       this.isSending = false;
     }

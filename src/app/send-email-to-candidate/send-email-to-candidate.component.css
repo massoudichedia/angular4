@@ -1,4 +1,4 @@
-/* send-email-to-candidate.component.css */
+/* Animation de spin */
 .animate-spin {
   animation: spin 1s linear infinite;
 }
@@ -12,6 +12,67 @@
   }
 }
 
+/* Couleurs de bordure pour les erreurs */
 .border-red-300 {
   border-color: #fca5a5;
+}
+
+/* Styles pour le fond flou */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+/* Animation du modal */
+.modal-enter {
+  opacity: 0;
+  backdrop-filter: blur(0);
+}
+
+.modal-enter-active {
+  opacity: 1;
+  backdrop-filter: blur(4px);
+  transition: opacity 200ms ease-out, backdrop-filter 200ms ease-out;
+}
+
+.modal-exit {
+  opacity: 1;
+  backdrop-filter: blur(4px);
+}
+
+.modal-exit-active {
+  opacity: 0;
+  backdrop-filter: blur(0);
+  transition: opacity 200ms ease-in, backdrop-filter 200ms ease-in;
+}
+
+/* Styles responsives */
+@media (max-width: 768px) {
+  .fixed {
+    padding: 1rem;
+  }
+  
+  .max-w-2xl {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  textarea {
+    rows: 6;
+  }
+}
+
+/* Transition pour les interactions */
+.transition-colors {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Effet de focus pour les inputs */
+.focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus\:ring-violet-300:focus {
+  --tw-ring-color: #c4b5fd;
 }

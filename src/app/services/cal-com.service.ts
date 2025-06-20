@@ -7,7 +7,18 @@ import { environment } from '../environment';
   providedIn: 'root'
 })
 export class CalComService {
+    private apiUrl = 'https://api.cal.com/v2';
+
   constructor(private http: HttpClient) { }
+
+   getUpcomingBookings(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/bookings`, {
+      params: {
+        status: 'upcoming',
+        limit: '10'
+      }
+    });
+  }
 
   async initCalendar(calLink: string, elementId: string): Promise<void> {
     return new Promise((resolve, reject) => {

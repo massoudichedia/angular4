@@ -1,0 +1,18 @@
+{
+  "/api": {
+    "target": "https://api.cal.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    },
+    "headers": {
+      "Authorization": "Bearer cal_live_8008f0840ad940f04adb696bb3762107",
+      "cal-api-version": "2024-08-13",
+      "Accept": "application/json",
+      "Cache-Control": "no-cache"
+    },
+    "onProxyRes": "function(proxyRes) { proxyRes.headers['Cache-Control'] = 'no-cache'; proxyRes.headers['Pragma'] = 'no-cache'; }"
+  }
+}

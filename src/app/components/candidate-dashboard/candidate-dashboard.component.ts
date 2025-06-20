@@ -36,7 +36,6 @@ export class CandidateDashboardComponent {
   ngOnInit() {
     this.initializeCandidateData();
     
-    // Si aucun recruitmentSteps n'est passé en input, utilisez les valeurs par défaut
     if (!this.recruitmentSteps || this.recruitmentSteps.length === 0) {
       this.recruitmentSteps = [
         { 

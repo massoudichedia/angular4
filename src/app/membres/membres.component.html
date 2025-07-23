@@ -1,0 +1,369 @@
+<div class="p-6 bg-white rounded-lg shadow">
+  <!-- Messages d'erreur/succès -->
+  <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+    {{ successMessage }}
+  </div>
+
+  <!-- Header with search and filters -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <h1 class="text-2xl font-bold text-gray-800">Gestion des Membres</h1>
+    
+    <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+      <button (click)="openAddModal()" 
+              class="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+        </svg>
+        Ajouter un membre
+      </button>
+      
+      <div class="relative flex-grow md:w-64">
+        <input type="text" 
+               [(ngModel)]="searchTerm" 
+               (ngModelChange)="applyFilters()"
+               placeholder="Rechercher par nom ou email..."
+               class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+        <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      
+      <select [(ngModel)]="statusFilter" 
+              (ngModelChange)="applyFilters()" 
+              class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+        <option value="">Tous les statuts</option>
+        <option value="En attente">En attente</option>
+        <option value="Confirmé">Confirmé</option>
+        <option value="Excusé">Excusé</option>
+        <option value="Absent">Absent</option>
+      </select>
+      
+      <select [(ngModel)]="roleFilter" 
+              (ngModelChange)="applyFilters()" 
+              class="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+        <option value="">Tous les rôles</option>
+        <option value="RH">RH</option>
+        <option value="Manager">Manager</option>
+        <option value="Admin">Admin</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="flex justify-center py-12">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Desktop table -->
+  <div *ngIf="!isLoading" class="hidden md:block overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-purple-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">
+            Nom & Email
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">
+            Entretien
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">
+            Évaluation
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">
+            Rôle
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-purple-800 uppercase tracking-wider">
+            Statut
+          </th>
+          <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-purple-800 uppercase tracking-wider">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let membre of filteredMembres" @fadeInOut class="hover:bg-gray-50">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                <span class="text-purple-800 font-medium">
+                  {{ membre.utilisateur.nom.charAt(0) }}
+                </span>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">{{ membre.utilisateur.nom }}</div>
+                <div class="text-sm text-purple-600">{{ membre.utilisateur.email }}</div>
+              </div>
+            </div>
+          </td>
+          
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div *ngIf="membre.entretien" class="text-sm text-gray-900">
+              <span class="font-medium">{{ membre.entretien.mode }}</span>
+              <div class="text-gray-500">
+                {{ membre.entretien.date | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+            </div>
+            <div *ngIf="!membre.entretien" class="text-sm text-gray-500">
+              Non assigné
+            </div>
+          </td>
+          
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div *ngIf="membre.evaluation" class="text-sm">
+              <div class="flex items-center">
+                <span class="font-medium mr-2">Note:</span>
+                <span class="px-2 py-1 rounded-full text-xs font-bold 
+                          {{ membre.evaluation.note >= 16 ? 'bg-green-100 text-green-800' : 
+                             membre.evaluation.note >= 10 ? 'bg-yellow-100 text-yellow-800' : 
+                             'bg-red-100 text-red-800' }}">
+                  {{ membre.evaluation.note }}/20
+                </span>
+              </div>
+              <div class="text-gray-500 mt-1 truncate max-w-xs">
+                {{ membre.evaluation.commentaire || 'Aucun commentaire' }}
+              </div>
+            </div>
+            <div *ngIf="!membre.evaluation" class="text-sm text-gray-500">
+              Non évalué
+            </div>
+          </td>
+          
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div *ngIf="membre.utilisateur.role" class="text-sm">
+              <span class="px-2 py-1 rounded-full text-xs font-bold 
+                        {{ membre.utilisateur.role === 'RH' ? 'bg-purple-100 text-purple-800' : 
+                           membre.utilisateur.role === 'Manager' ? 'bg-blue-100 text-blue-800' : 
+                           'bg-green-100 text-green-800' }}">
+                {{ membre.utilisateur.role }}
+              </span>
+            </div>
+            <div *ngIf="!membre.utilisateur.role" class="text-sm text-gray-500">
+              Non attribué
+            </div>
+          </td>
+          
+          <td class="px-6 py-4 whitespace-nowrap">
+            <select [(ngModel)]="membre.statut" 
+                    (change)="updateStatus(membre, $event)"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800 border-green-300': membre.statut === 'Confirmé',
+                      'bg-yellow-100 text-yellow-800 border-yellow-300': membre.statut === 'En attente',
+                      'bg-red-100 text-red-800 border-red-300': membre.statut === 'Absent' || membre.statut === 'Excusé'
+                    }"
+                    class="px-3 py-1 border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-600">
+              <option value="En attente">En attente</option>
+              <option value="Confirmé">Confirmé</option>
+              <option value="Excusé">Excusé</option>
+              <option value="Absent">Absent</option>
+            </select>
+          </td>
+          
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button (click)="openEditModal(membre)" class="text-purple-600 hover:text-purple-900 mr-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+              </svg>
+            </button>
+            <button (click)="deleteMembre(membre.id)" class="text-red-600 hover:text-red-900">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div *ngIf="filteredMembres.length === 0 && !isLoading" class="text-center py-8 text-gray-500">
+      Aucun membre trouvé avec ces critères de recherche
+    </div>
+  </div>
+
+  <!-- Mobile view -->
+  <div *ngIf="!isLoading" class="md:hidden space-y-4">
+    <div *ngFor="let membre of filteredMembres" @fadeInOut
+         class="bg-white p-4 rounded-lg shadow border border-gray-100">
+      <div class="flex justify-between items-start">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center mr-3">
+            <span class="text-purple-800 font-medium">
+              {{ membre.utilisateur.nom.charAt(0) }}
+            </span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800">{{ membre.utilisateur.nom }}</h3>
+            <p class="text-purple-600 text-sm">{{ membre.utilisateur.email }}</p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button (click)="openEditModal(membre)" class="text-purple-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+            </svg>
+          </button>
+          <button (click)="deleteMembre(membre.id)" class="text-red-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <p class="font-semibold text-gray-500">Entretien</p>
+          <p *ngIf="membre.entretien" class="text-gray-800">
+            {{ membre.entretien.mode }}<br>
+            <span class="text-gray-500">{{ membre.entretien.date | date:'dd/MM/yy HH:mm' }}</span>
+          </p>
+          <p *ngIf="!membre.entretien" class="text-gray-500">Non assigné</p>
+        </div>
+        
+        <div>
+          <p class="font-semibold text-gray-500">Évaluation</p>
+          <div *ngIf="membre.evaluation" class="text-gray-800">
+            <span class="font-medium mr-2">Note:</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-bold 
+                      {{ membre.evaluation.note >= 16 ? 'bg-green-100 text-green-800' : 
+                         membre.evaluation.note >= 10 ? 'bg-yellow-100 text-yellow-800' : 
+                         'bg-red-100 text-red-800' }}">
+              {{ membre.evaluation.note }}/20
+            </span>
+            <p class="mt-1 text-gray-500 line-clamp-2">
+              {{ membre.evaluation.commentaire || 'Aucun commentaire' }}
+            </p>
+          </div>
+          <p *ngIf="!membre.evaluation" class="text-gray-500">Non évalué</p>
+        </div>
+      </div>
+      
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <p class="font-semibold text-gray-500">Rôle</p>
+          <div *ngIf="membre.utilisateur.role" class="text-gray-800">
+            <span class="px-2 py-0.5 rounded-full text-xs font-bold 
+                      {{ membre.utilisateur.role === 'RH' ? 'bg-purple-100 text-purple-800' : 
+                         membre.utilisateur.role === 'Manager' ? 'bg-blue-100 text-blue-800' : 
+                         'bg-green-100 text-green-800' }}">
+              {{ membre.utilisateur.role }}
+            </span>
+          </div>
+          <p *ngIf="!membre.utilisateur.role" class="text-gray-500 text-sm">Non attribué</p>
+        </div>
+        
+        <div>
+          <p class="font-semibold text-gray-500">Statut</p>
+          <select [(ngModel)]="membre.statut" 
+                  (change)="updateStatus(membre, $event)"
+                  [ngClass]="{
+                    'bg-green-100 text-green-800 border-green-300': membre.statut === 'Confirmé',
+                    'bg-yellow-100 text-yellow-800 border-yellow-300': membre.statut === 'En attente',
+                    'bg-red-100 text-red-800 border-red-300': membre.statut === 'Absent' || membre.statut === 'Excusé'
+                  }"
+                  class="w-full px-3 py-1.5 border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <option value="En attente">En attente</option>
+            <option value="Confirmé">Confirmé</option>
+            <option value="Excusé">Excusé</option>
+            <option value="Absent">Absent</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="filteredMembres.length === 0 && !isLoading" class="text-center py-8 text-gray-500 bg-white rounded-lg shadow border border-gray-100">
+      Aucun membre trouvé avec ces critères de recherche
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="filteredMembres.length > 0 && !isLoading" class="mt-6 flex justify-between items-center">
+    <div class="text-sm text-gray-500">
+      Affichage de {{ filteredMembres.length }} sur {{ membres.length }} membres
+    </div>
+    <div class="flex gap-2">
+      <button [disabled]="currentPage === 1" 
+              (click)="prevPage()"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === 1}"
+              class="px-3 py-1 border rounded-lg text-sm font-medium text-purple-600 hover:bg-purple-50 transition">
+        Précédent
+      </button>
+      <button *ngFor="let page of getPages()" 
+              (click)="goToPage(page)"
+              [ngClass]="{'bg-purple-600 text-white': currentPage === page, 'text-purple-600 hover:bg-purple-50': currentPage !== page}"
+              class="px-3 py-1 border rounded-lg text-sm font-medium transition">
+        {{ page }}
+      </button>
+      <button [disabled]="currentPage === totalPages" 
+              (click)="nextPage()"
+              [ngClass]="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
+              class="px-3 py-1 border rounded-lg text-sm font-medium text-purple-600 hover:bg-purple-50 transition">
+        Suivant
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div @slideInOut class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-gray-800">
+        {{ isEditing ? 'Modifier membre' : 'Ajouter un membre' }}
+      </h3>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <form (ngSubmit)="submitForm()">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Nom complet</label>
+          <input type="text" [(ngModel)]="currentMembre.utilisateur.nom" name="nom" required
+                 class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" [(ngModel)]="currentMembre.utilisateur.email" name="email" required
+                 class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Rôle</label>
+          <select [(ngModel)]="currentMembre.utilisateur.role" name="role" required
+                  class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <option value="RH">RH</option>
+            <option value="Manager">Manager</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Statut</label>
+          <select [(ngModel)]="currentMembre.statut" name="statut" required
+                  class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600">
+            <option value="En attente">En attente</option>
+            <option value="Confirmé">Confirmé</option>
+            <option value="Excusé">Excusé</option>
+            <option value="Absent">Absent</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="mt-6 flex justify-end gap-3">
+        <button type="button" (click)="closeModal()" class="px-4 py-2 border rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+          Annuler
+        </button>
+        <button type="submit" class="px-4 py-2 bg-purple-600 rounded-lg text-sm font-medium text-white hover:bg-purple-700">
+          {{ isEditing ? 'Modifier' : 'Ajouter' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

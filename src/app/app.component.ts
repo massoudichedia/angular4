@@ -41,6 +41,9 @@ export class AppComponent {
     } else if (section === 'candidates') {
       this.router.navigateByUrl('/');
     }
+    else if (section === 'membres') {
+    this.router.navigateByUrl('/membres');
+  }
      else if (section === 'settings') {
       this.router.navigateByUrl('/');
     }

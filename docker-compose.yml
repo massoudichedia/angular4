@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gestionentretien-dev
+    ports:
+      - "9000:80"
+    volumes:
+      - .:/app            # volume pour le code
+      - /app/node_modules # ignorer les node_modules host
+    command: npm run start
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # utile pour que Angular détecte bien les changements

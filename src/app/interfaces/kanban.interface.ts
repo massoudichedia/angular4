@@ -1,5 +1,7 @@
 export interface KanbanItem {
   id: string;
+   candidateId: string; // candidateId from the ticket
+  shortlistedId: number | null; // ID auto-increment de la table ShortlistedCandidate
   name: string;
   email: string;
   phone: string;
@@ -11,15 +13,17 @@ export interface KanbanItem {
   notes?: CandidateNote[];
   evaluation?: Evaluation;
   progress: number;
-  cvUrl?: string;
+  cvUrl: string;
   appliedDate?: Date;
   position?: string;
+
 }
 
 export interface KanbanColumn {
   id: string;
   title: string;
   tickets: KanbanItem[];
+  
 }
 
 export interface RecruitmentStep {
@@ -36,6 +40,7 @@ export interface SkillEvaluation {
   required: number;
   acquired: number;
   comment?: string;
+  
 }
 
 export interface Evaluation {

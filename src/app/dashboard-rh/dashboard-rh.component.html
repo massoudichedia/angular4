@@ -3,7 +3,7 @@
   <div class="flex justify-between items-center mb-8">
     <h1 class="text-3xl font-bold text-[#5E48E8]">Dashboard RH</h1>
     <div class="flex gap-4">
-        <button 
+      <button 
         routerLink="/calendar-view" 
         class="bg-white text-[#5E48E8] border border-[#5E48E8] px-5 py-2 rounded-lg hover:bg-gray-50 transition flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -14,18 +14,17 @@
       <button class="bg-[#5E48E8] text-white px-5 py-2 rounded-lg shadow hover:bg-[#4b3dc2] transition">
         Nouveau rapport
       </button>
-      
-     
     </div>
   </div>
 
   <!-- Cartes de statistiques -->
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6 mb-8">
-    <div *ngFor="let stat of currentStats | keyvalue" class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
-      <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">
-        {{ getStatLabel(stat.key) }}
+    <!-- Cartes dynamiques des phases -->
+    <div *ngFor="let phase of phases" class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+      <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide truncate">
+        {{ phase.title }}
       </h3>
-      <p class="text-3xl font-bold text-[#5E48E8] mt-2">{{ stat.value }}</p>
+      <p class="text-3xl font-bold text-[#5E48E8] mt-2">{{ phase.count }}</p>
     </div>
   </div>
 
@@ -118,8 +117,8 @@
 </div>
 
 <!-- Modal pour inviter des membres -->
-<!-- Nouveau style avec effet de flou -->
-<div *ngIf="showAddGuestsModal" class="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">  <div class="bg-white rounded-lg p-6 w-full max-w-md">
+<div *ngIf="showAddGuestsModal" class="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md">
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-lg font-medium">Inviter un membre</h3>
       <button (click)="closeAddGuestsModal()" class="text-gray-500 hover:text-gray-700">

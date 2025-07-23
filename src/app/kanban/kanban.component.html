@@ -1,25 +1,14 @@
 <div class="max-w-[1400px] mx-auto my-8 px-4">
-  <!-- Barre de statistiques -->
-  <div class="bg-white p-4 rounded-lg shadow-md mb-6 grid grid-cols-5 gap-4 text-center">
-    <div>
-      <p class="text-sm text-gray-500">Pré-sélection</p>
-      <p class="text-2xl font-bold">{{ stats()?.presSelectionne || 0 }}</p>
-    </div>
-    <div>
-      <p class="text-sm text-gray-500">Entretiens RH</p>
-      <p class="text-2xl font-bold">{{ stats()?.rhInterview || 0 }}</p>
-    </div>
-    <div>
-      <p class="text-sm text-gray-500">Techniques</p>
-      <p class="text-2xl font-bold">{{ stats()?.technique || 0 }}</p>
-    </div>
-    <div>
-      <p class="text-sm text-gray-500">Embauchés</p>
-      <p class="text-2xl font-bold">{{ stats()?.embauche || 0 }}</p>
-    </div>
-    <div>
-      <p class="text-sm text-gray-500">Refusés</p>
-      <p class="text-2xl font-bold">{{ stats()?.refuse || 0 }}</p>
+  <!-- Barre de statistiques dynamique -->
+  <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+    <div class="grid gap-4 text-center" 
+         [style.grid-template-columns]="'repeat(' + columns().length + ', minmax(0, 1fr))'">
+      @for (column of columns(); track column.id) {
+        <div>
+          <p class="text-sm text-gray-500">{{ column.title }}</p>
+          <p class="text-2xl font-bold">{{ column.tickets.length }}</p>
+        </div>
+      }
     </div>
   </div>
 
@@ -49,65 +38,71 @@
     </div>
   </div>
 
-  @if (showAddColumnForm) {
-  <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-    <div class="flex gap-2">
-      <input
-        type="text"
-        [(ngModel)]="newColumnTitle"
-        placeholder="Nom de la nouvelle phase (ex: RH2)"
-        class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        (keyup.enter)="addNewColumn()">
-      <button
-        (click)="addNewColumn()"
-        class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
-        Ajouter
-      </button>
-      <button
-        (click)="showAddColumnForm = false; newColumnTitle = ''"
-        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
-        Annuler
-      </button>
+  @if (errorMessage) {
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ errorMessage }}
     </div>
-  </div>
+  }
+
+  @if (showAddColumnForm) {
+    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+      <div class="flex gap-2">
+        <input
+          type="text"
+          [(ngModel)]="newColumnTitle"
+          placeholder="Nom de la nouvelle phase (ex: RH2)"
+          class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          (keyup.enter)="addNewColumn()">
+        <button
+          (click)="addNewColumn()"
+          class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+          Ajouter
+        </button>
+        <button
+          (click)="showAddColumnForm = false; newColumnTitle = ''; errorMessage = null"
+          class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+          Annuler
+        </button>
+      </div>
+    </div>
   }
 
   <div class="flex gap-8 overflow-x-auto pb-4" cdkDropListGroup>
     @for (column of columns(); track column.id) {
-    <app-kanban-column
-      cdkDrag
-      class="flex-1 p-6 bg-gray-50 rounded-lg min-w-[380px]"
-      cdkDropList
-      [cdkDropListData]="column.tickets"
-      [title]="column.title"
-      [tickets]="column.tickets"
-      (cdkDropListDropped)="drop($event)"
-      (deleteColumn)="deleteColumn(column.id)"
-      (titleChanged)="updateColumnTitle(column.id, $event)">
-      @for (candidate of column.tickets; track candidate.id) {
-      <app-kanban-item
+      <app-kanban-column
         cdkDrag
-        [item]="candidate"
-        (openDetails)="onCandidateSelected($event)"
-        class="mb-5 last:mb-0" />
-      }
-    </app-kanban-column>
+        class="flex-1 p-6 bg-gray-50 rounded-lg min-w-[380px]"
+        cdkDropList
+        [cdkDropListData]="column.tickets"
+        [title]="column.title"
+        [tickets]="column.tickets"
+        (cdkDropListDropped)="drop($event)"
+        (deleteColumn)="deleteColumn(column.id)"
+        (titleChanged)="updateColumnTitle(column.id, $event)">
+        @for (candidate of column.tickets; track candidate.id) {
+          <app-kanban-item
+            cdkDrag
+            [item]="candidate"
+            (openDetails)="onCandidateSelected($event)"
+            class="mb-5 last:mb-0" />
+        }
+      </app-kanban-column>
     }
   </div>
 </div>
 
 <!-- Dashboard des détails -->
 @if (showDashboard && selectedCandidate) {
-<app-candidate-dashboard
-  [candidate]="selectedCandidate"
-  [recruitmentSteps]="recruitmentSteps"
-  (close)="onCloseDashboard()" />
+  <app-candidate-dashboard
+    [candidate]="selectedCandidate"
+    [recruitmentSteps]="recruitmentSteps"
+    (close)="onCloseDashboard()" />
 }
 
 <!-- Modal de description de poste -->
 @if (showJobDescriptionModal) {
-<app-job-description-modal
-  [jobDescription]="jobDescription"
-  (onClose)="closeJobDescriptionModal()">
-</app-job-description-modal>
+  <app-job-description-modal
+    [jobDescription]="jobDescription"
+    (onClose)="closeJobDescriptionModal()">
+  </app-job-description-modal>
 }
